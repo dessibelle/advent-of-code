@@ -23,12 +23,15 @@ def look_and_see(number, num_iterations=1, iteration=0):
 
 if __name__ == "__main__":
 
-    print(look_and_see(1))
-    print(look_and_see(11))
-    print(look_and_see(21))
-    print(look_and_see(1211))
-    print(look_and_see(111221))
-    print(look_and_see(3))
+    assert look_and_see(1) == "11"
+    assert look_and_see(11) == "21"
+    assert look_and_see(21) == "1211"
+    assert look_and_see(1211) == "111221"
+    assert look_and_see(111221) == "312211"
+    assert look_and_see(3) == "13"
 
-    print(len(look_and_see(1321131112, 40)))
-    print(len(look_and_see(1321131112, 50)))
+    with open("./10.input.txt") as f:
+        initial = f.read().strip()
+
+        print("Length after {} iterations: {}".format(40, len(look_and_see(initial, 40))))
+        print("Length after {} iterations: {}".format(50, len(look_and_see(initial, 50))))

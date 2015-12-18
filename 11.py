@@ -48,18 +48,25 @@ if __name__ == "__main__":
     assert verify_password("abcdffaa") is True
     assert verify_password("ghjaabcc") is True
 
-    password = "vzbxkghb"
-    # password = "vzbxxyzz"
+    def next_password(password):
+        valid = False
+        num = 0
+        while not valid:
+            num += 1
+            password = increment_password(password)
+            valid = verify_password(password)
 
-    start_time = time.time()
+        return password, num
 
-    valid = False
-    num = 0
-    while not valid:
-        num += 1
-        password = increment_password(password)
-        valid = verify_password(password)
+    with open("./11.input.txt") as f:
+        password = f.read().strip()
 
-    print("Valid password ({} iterations): {}".format(num, password))
+        start_time = time.time()
+        password, num = next_password(password)
+        print("Valid password ({} iterations): {}".format(num, password))
+        print("--- %s seconds ---" % (time.time() - start_time))
 
-    print("--- %s seconds ---" % (time.time() - start_time))
+        start_time = time.time()
+        password, num = next_password(password)
+        print("Valid password ({} iterations): {}".format(num, password))
+        print("--- %s seconds ---" % (time.time() - start_time))
