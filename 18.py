@@ -100,5 +100,3 @@ if __name__ == "__main__":
 
         print("\n" + str(cgrid) + "\n\n=====")
         print(cgrid.sum())
-
-
