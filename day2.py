@@ -48,7 +48,7 @@ if __name__ == "__main__":
     numbers = re.compile(r'([0-9]+)')
     boxes = []
 
-    with open("./2.input.txt") as f:
+    with open("./day2.input.txt") as f:
 
         for line in f:
             boxes.append(list(map(int, numbers.findall(line))))

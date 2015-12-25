@@ -30,7 +30,7 @@ if __name__ == "__main__":
     assert look_and_see(111221) == "312211"
     assert look_and_see(3) == "13"
 
-    with open("./10.input.txt") as f:
+    with open("./day10.input.txt") as f:
         initial = f.read().strip()
 
         print("Length after {} iterations: {}".format(40, len(look_and_see(initial, 40))))

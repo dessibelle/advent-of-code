@@ -26,7 +26,7 @@ def evaluate_words(words, evaluator):
 
 if __name__ == "__main__":
 
-    with open("./5.input.txt") as f:
+    with open("./day5.input.txt") as f:
 
         words = []
 

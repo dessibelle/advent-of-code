@@ -20,7 +20,7 @@ def find_hex(lead, initial=0, length=5):
 
 if __name__ == "__main__":
 
-    with open("./4.input.txt") as f:
+    with open("./day4.input.txt") as f:
 
         target_hash = f.read().strip()
 

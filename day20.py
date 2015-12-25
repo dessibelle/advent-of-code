@@ -10,7 +10,7 @@ def presents_for_house(house):
 
 if __name__ == "__main__":
 
-    with open("./20.input.txt") as f:
+    with open("./day20.input.txt") as f:
         target = int(f.read().strip())
 
         num_presents = 0

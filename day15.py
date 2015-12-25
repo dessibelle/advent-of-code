@@ -80,7 +80,7 @@ if __name__ == "__main__":
         r'flavor (?P<flavor>-?[0-9]+), texture (?P<texture>-?[0-9]+), calories (?P<calories>-?[0-9]+)'
     )
 
-    with open("./15.input.txt") as f:
+    with open("./day15.input.txt") as f:
 
         ingredients = []
         for line in f:

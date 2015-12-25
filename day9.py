@@ -99,7 +99,7 @@ if __name__ == "__main__":
 
     graph = Graph()
 
-    with open("./9.input.txt") as f:
+    with open("./day9.input.txt") as f:
         regex = re.compile(r'(?P<node>[A-Za-z]+)\s+to\s+(?P<destination>[A-Za-z]+)\s+=\s+(?P<distance>[0-9]+)')
         for line in f:
             m = regex.match(line.strip())

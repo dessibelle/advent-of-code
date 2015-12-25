@@ -77,7 +77,7 @@ class FileParser(object):
 
 if __name__ == "__main__":
 
-    parser = FileParser("./7.input.txt")
+    parser = FileParser("./day7.input.txt")
     parser.execute()
 
     print(parser.register)

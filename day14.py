@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     rd_regex = re.compile(r'(?P<name>[A-Za-z]+) can fly (?P<speed>[0-9]+) km/s for (?P<burst>[0-9]+) seconds, but then must rest for (?P<rest>[0-9]+) seconds\.')
 
-    with open("./14.input.txt") as f:
+    with open("./day14.input.txt") as f:
 
         raindeer = []
         for line in f:

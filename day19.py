@@ -63,7 +63,7 @@ if __name__ == "__main__":
     electrons = []
     molecule = None
 
-    with open("./19.input.txt") as f:
+    with open("./day19.input.txt") as f:
         for line in f:
             line = line.strip()
 

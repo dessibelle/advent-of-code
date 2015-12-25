@@ -58,7 +58,7 @@ def deliver_presents_distributed(directions):
 
 if __name__ == "__main__":
 
-    with open("./3.input.txt") as f:
+    with open("./day3.input.txt") as f:
 
         directions = f.read().strip()
 

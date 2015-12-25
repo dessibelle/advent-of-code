@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
     steps = 100
 
-    with open("./18.input.txt") as f:
+    with open("./day18.input.txt") as f:
         width = 0
         height = 0
 

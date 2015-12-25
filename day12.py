@@ -21,7 +21,7 @@ def object_sum(data, exclude=[], total=0):
 
 if __name__ == "__main__":
 
-    with open("./12.input.txt") as f:
+    with open("./day12.input.txt") as f:
         data = json.loads(f.read())
 
         print object_sum(data)

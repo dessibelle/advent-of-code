@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
         return password, num
 
-    with open("./11.input.txt") as f:
+    with open("./day11.input.txt") as f:
         password = f.read().strip()
 
         start_time = time.time()

@@ -14,7 +14,7 @@ def find_combinations(containers, target):
 
 if __name__ == "__main__":
 
-    with open("./17.input.txt") as f:
+    with open("./day17.input.txt") as f:
 
         containers = []
 

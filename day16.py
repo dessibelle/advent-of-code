@@ -48,7 +48,7 @@ if __name__ == "__main__":
     prop_regex = re.compile(r'([a-z]+):\s+([0-9]+)+')
     sue_regex = re.compile(r'Sue\s+([0-9]+):')
 
-    with open("./16.input.txt") as f:
+    with open("./day16.input.txt") as f:
 
         target = {
             "children": 3,

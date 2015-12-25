@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     preference_regex = re.compile(r'(?P<object>[A-Za-z]+) would (?P<gainlose>[a-z]+) (?P<value>[0-9]+) happiness units by sitting next to (?P<subject>[A-Za-z]+)\.')
 
-    with open("./13.input.txt") as f:
+    with open("./day13.input.txt") as f:
 
         for line in f:
             m = preference_regex.match(line.strip())

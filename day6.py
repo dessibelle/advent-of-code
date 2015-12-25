@@ -92,11 +92,11 @@ class FileParser(object):
 if __name__ == "__main__":
 
     grid = Grid(1000, 1000)
-    parser = FileParser("./6.input.txt", grid)
+    parser = FileParser("./day6.input.txt", grid)
     parser.parse()
     print(grid.sum())
 
     grid = DimmableGrid(1000, 1000)
-    parser = FileParser("./6.input.txt", grid)
+    parser = FileParser("./day6.input.txt", grid)
     parser.parse()
     print(grid.sum())

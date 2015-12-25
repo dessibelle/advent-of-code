@@ -235,8 +235,8 @@ def load_opponent(path):
 
 if __name__ == "__main__":
 
-    shop = load_items("./21.items.txt")
-    boss = load_opponent("./21.input.txt")
+    shop = load_items("./day21.items.txt")
+    boss = load_opponent("./day21.input.txt")
     player = Player()
 
     print(shop)
