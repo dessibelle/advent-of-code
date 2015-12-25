@@ -1,6 +1,7 @@
 import re
 from collections import defaultdict
 import itertools
+import functools
 
 
 cat_regex = re.compile(r'(?P<name>[A-Za-z]+):\s+[A-Za-z]+\s+[A-Za-z]+\s+[A-Za-z]+')
@@ -119,17 +120,17 @@ class Player(Character):
         self._reset_damage_and_armor()
 
     def get_item_cost(self):
-        return reduce(lambda x, y: x + y.cost, self.items, 0)
+        return functools.reduce(lambda x, y: x + y.cost, self.items, 0)
     item_cost = property(get_item_cost)
 
     def get_damage(self):
         if self._damage is None:
-            self._damage = self.damage + reduce(lambda x, y: x + y.damage, self.items, 0)
+            self._damage = self.damage + functools.reduce(lambda x, y: x + y.damage, self.items, 0)
         return self._damage
 
     def get_armor(self):
         if self._armor is None:
-            self._armor = self.armor + reduce(lambda x, y: x + y.armor, self.items, 0)
+            self._armor = self.armor + functools.reduce(lambda x, y: x + y.armor, self.items, 0)
         return self._armor
 
 
