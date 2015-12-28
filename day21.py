@@ -12,6 +12,9 @@ damage_regex = re.compile(r'Damage: (?P<damage>\d+)')
 armor_regex = re.compile(r'Armor: (?P<armor>\d+)')
 
 
+DEBUG = False
+
+
 class DeathException(Exception):
 
     def __init__(self, attacker, defender, *args, **kwargs):
@@ -44,6 +47,9 @@ class Fight(object):
 
         attacker.attack(defender)
 
+        if attacker.points < 1:
+            raise DeathException(defender, attacker)
+
         if defender.points < 1:
             raise DeathException(attacker, defender)
 
@@ -73,16 +79,17 @@ class Character(object):
 
     def attack(self, opponent):
         score = max(self.get_damage() - opponent.get_armor(), 1)
-        opponent.take_hit(score)
+        opponent.take_hit(self, score)
 
-        # print("{} attacked {} with score {:>3}, resulting in opponent points {:>3}".format(
-        #     self.name,
-        #     opponent.name,
-        #     score,
-        #     opponent.points
-        # ))
+        if DEBUG:
+            print("{} attacked {} with score {:>3}, resulting in opponent points {:>3}".format(
+                self.name,
+                opponent.name,
+                score,
+                opponent.points
+            ))
 
-    def take_hit(self, score):
+    def take_hit(self, attacker, score):
         self.points -= score
 
     def get_damage(self):
@@ -98,14 +105,20 @@ class Character(object):
         return str(self)
 
 
-class Player(Character):
+class PlayingCharacter(Character):
 
-    def __init__(self, name="Player 1", items=[], **kwargs):
+    def __init__(self, name="Player 1", **kwargs):
+        super(PlayingCharacter, self).__init__(name=name, **kwargs)
+        self.is_npc = False
+
+
+class Player(PlayingCharacter):
+
+    def __init__(self, items=[], **kwargs):
         kwargs.update(damage=0, armor=0)
-        super(Player, self).__init__(name=name, **kwargs)
+        super(Player, self).__init__(**kwargs)
         self.items = items
         self._reset_damage_and_armor()
-        self.is_npc = False
 
     def _reset_damage_and_armor(self):
         self._damage = None
@@ -252,18 +265,20 @@ if __name__ == "__main__":
         player.set_items(list(c))
         fight = Fight([player, boss])
 
-        # print("### Fight with items: {} ###\n".format(", ".join([i.name for i in c])))
-        # print(boss)
-        # f = "{:>" + str(max(len(str(boss)), len(str(player))) // 2) + "}"
-        # print(f.format("vs."))
-        # print(player)
-        # print("\nFIGHT!\n")
+        if DEBUG:
+            print("### Fight with items: {} ###\n".format(", ".join([i.name for i in c])))
+            print(boss)
+            f = "{:>" + str(max(len(str(boss)), len(str(player))) // 2) + "}"
+            print(f.format("vs."))
+            print(player)
+            print("\nFIGHT!\n")
 
         try:
             fight.start()
         except DeathException as e:
 
-            # print("\n{} won{}.\n".format(e.attacker, " with spending {}".format(e.attacker.get_item_cost()) if not e.is_npc_win else ""))
+            if DEBUG:
+                print("\n{} won{}.\n".format(e.attacker, " with spending {}".format(e.attacker.get_item_cost()) if not e.is_npc_win else ""))
 
             if not e.is_npc_win:
                 if min_cost != min(min_cost, e.attacker.get_item_cost()):
