@@ -1,7 +1,3 @@
-/*
- *
- */
-
 const captcha = require('./challenge.js');
 
 describe('captcha', () => {
