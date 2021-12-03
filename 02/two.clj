@@ -1,6 +1,6 @@
 (ns user (:require [clojure.string :as s] [clojure.java.io :as io]))
 
-(defn parse-tuple-string [tuple]
+(defn parse-string-tuple [tuple]
   (list (keyword (first tuple)) (Integer. (second tuple))))
 
 (defn direction-to-axis [direction]
@@ -25,20 +25,24 @@
 (defn parse-line [line]
   (-> line
       (s/split #" ")
-      (parse-tuple-string)))
+      (parse-string-tuple)))
 
-(defn readfile [filename]
+(defn part1-reducer [collection]
+  (reduce (fn [coll item] (let [key (first item)
+                                     delta (second item)
+                                     current (key coll)
+                                     next (+ current delta)]
+                                 (assoc coll key next)))
+               {:x 0 :y 0} collection))
+
+(defn readfile [filename reducer]
   (->> filename
        slurp
        s/split-lines
        (map parse-line)
        (map (fn [tuple] (apply tuple-to-cordinate tuple)))
-       (reduce (fn [coll item] (let [key (first item)
-                                     delta (second item)
-                                     current (key coll)
-                                     next (+ current delta)]
-                                 (assoc coll key next)))
-               {:x 0 :y 0})
+       (reducer)
        (vals)
        (apply *)))
 
+(readfile "./input.txt" part1-reducer)
