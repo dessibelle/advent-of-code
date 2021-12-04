@@ -11,9 +11,9 @@
 
 (defn direction-to-multiplier [direction]
   (direction {:forward  1
-               :backward -1
-               :up       -1
-               :down     1}))
+              :backward -1
+              :up       -1
+              :down     1}))
 
 (defn direction-to-delta [direction delta]
   (* delta (direction-to-multiplier direction)))
