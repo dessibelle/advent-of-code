@@ -1,4 +1,5 @@
-(ns user (:require [clojure.string :as s]))
+(ns user (:require [clojure.string :as s]
+                   [clojure.set :as set]))
 
 (defn parse-number-string [numbers-string separator]
   (map #(Integer. %) (s/split numbers-string separator)))
@@ -58,7 +59,11 @@
       nil)))
 
 (defn get-boards-with-bingo [game-state]
-  (remove nil? (apply concat (map is-bingo-on-board game-state))))
+
+  (map is-bingo-on-board game-state)
+;;   (remove nil? (apply concat (map is-bingo-on-board game-state)))
+
+)
 
 (defn apply-bingo-number-to-cell [number cell]
   (if (= number (:val cell))
@@ -79,19 +84,26 @@
     (reduce (fn [reduce-state number]
               (let [game-state (:game-state reduce-state)
                     next-game-state (apply-bingo-number-to-boards number game-state)
-                    board-with-bingo (get-boards-with-bingo next-game-state)]
-                (if (empty? (:bingo-board reduce-state))
-                  (assoc reduce-state
-                         :game-state next-game-state
-                         :bingo-board board-with-bingo
-                         :last-number number)
-                  reduce-state)))
+                    boards-with-bingo (get-boards-with-bingo next-game-state)
+                    winner-indices (keep-indexed (fn [idx val] (when (identity val) idx)) boards-with-bingo)
+                    new-winners (set/difference
+                                 (apply hash-set winner-indices)
+                                 (apply hash-set (:winners reduce-state)))
+                    next-winners (apply conj (:winners reduce-state) new-winners)
+                    next-winner-states (apply conj
+                                              (:winner-states reduce-state)
+                                              (map #(hash-map :board (nth next-game-state %) :number number) new-winners)
+                                              )]
+                (assoc reduce-state
+                       :game-state next-game-state
+                       :winner-states next-winner-states
+                       :winners next-winners)))
             {:game-state raw-game-state
-             :bingo-board nil
-             :last-number -1}
+             :winner-states []
+             :winners []}
             bingo-numbers)))
 
-(defn calculate-part-1-score [board last-number]
+(defn calculate-score [board last-number]
   (println (format-board board))
   (let [unchecked-cells (filter #(false? (:checked %)) (apply concat board))
         unchecked-numbers (map :val unchecked-cells)]
@@ -107,12 +119,14 @@
   (let [input-data (readfile filename)
         bingo-numbers (parse-number-string (first input-data) #",")
         raw-bingo-boards (parse-bingo-boards (drop 1 input-data))
-        state (apply-game-state bingo-numbers raw-bingo-boards)]
-    (println (calculate-part-1-score (:bingo-board state) (:last-number state)))))
+        state (apply-game-state bingo-numbers raw-bingo-boards)
+        first-winner (first (:winner-states state))
+        last-winner (last (:winner-states state))]
+    (println (calculate-score (:board first-winner) (:number first-winner)))
+    (println (calculate-score (:board last-winner) (:number last-winner)))
+    ))
 
 
 (solve "./input.txt")
-;; (solve-part2 "./input.txt")
 
 ;; (solve "./test.txt")
-;; (solve-part2 "./test.txt")
