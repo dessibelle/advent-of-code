@@ -1,4 +1,4 @@
-(ns user (:require [clojure.string :as s] [clojure.java.io :as io]))
+(ns user (:require [clojure.string :as s]))
 
 (defn parse-string-tuple [tuple]
   (list (keyword (first tuple)) (Integer. (second tuple))))
