@@ -79,28 +79,31 @@
 (defn apply-bingo-number-to-boards [number bingo-boards]
   (map (partial apply-bingo-number-to-board number) bingo-boards))
 
+(defn game-state-reducer [reduce-state number]
+  (let [game-state (:game-state reduce-state)
+        next-game-state (apply-bingo-number-to-boards number game-state)
+        boards-with-bingo (get-boards-with-bingo next-game-state)
+        winner-indices (keep-indexed (fn [idx val]
+                                       (when (identity val) idx)) boards-with-bingo)
+        new-winners (set/difference
+                     (apply hash-set winner-indices)
+                     (apply hash-set (:winner-indicess reduce-state)))
+        next-winner-indices (apply conj (:winner-indicess reduce-state) new-winners)
+        next-winner-states (apply conj
+                                  (:winner-states reduce-state)
+                                  (map #(hash-map :board (nth next-game-state %)
+                                                  :number number) new-winners))]
+    (assoc reduce-state
+           :game-state next-game-state
+           :winner-states next-winner-states
+           :winner-indicess next-winner-indices)))
+
 (defn apply-game-state [bingo-numbers bingo-boards]
   (let [raw-game-state (map create-empty-game-state bingo-boards)]
-    (reduce (fn [reduce-state number]
-              (let [game-state (:game-state reduce-state)
-                    next-game-state (apply-bingo-number-to-boards number game-state)
-                    boards-with-bingo (get-boards-with-bingo next-game-state)
-                    winner-indices (keep-indexed (fn [idx val] (when (identity val) idx)) boards-with-bingo)
-                    new-winners (set/difference
-                                 (apply hash-set winner-indices)
-                                 (apply hash-set (:winners reduce-state)))
-                    next-winners (apply conj (:winners reduce-state) new-winners)
-                    next-winner-states (apply conj
-                                              (:winner-states reduce-state)
-                                              (map #(hash-map :board (nth next-game-state %) :number number) new-winners)
-                                              )]
-                (assoc reduce-state
-                       :game-state next-game-state
-                       :winner-states next-winner-states
-                       :winners next-winners)))
+    (reduce game-state-reducer
             {:game-state raw-game-state
              :winner-states []
-             :winners []}
+             :winner-indicess []}
             bingo-numbers)))
 
 (defn calculate-score [board last-number]
