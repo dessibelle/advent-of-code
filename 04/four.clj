@@ -130,6 +130,6 @@
     ))
 
 
-(solve "./input.txt")
+(solve "./input")
 
-;; (solve "./test.txt")
+;; (solve "./test")

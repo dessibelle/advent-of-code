@@ -2,7 +2,7 @@ const fs = require('fs')
 
 async function getInput() {
     return new Promise((resolve, reject) => {
-        fs.readFile('./input.txt', 'utf8' , (err, data) => {
+        fs.readFile('./input', 'utf8' , (err, data) => {
             if (err) {
                 reject(err);
             }

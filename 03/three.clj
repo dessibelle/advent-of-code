@@ -82,8 +82,8 @@
         ]
     (* oxygen-generator-rating co2-scrubbing-rating)))
 
-(solve "./input.txt")
-(solve-part2 "./input.txt")
+(solve "./input")
+(solve-part2 "./input")
 
-;; (solve "./test.txt")
-;; (solve-part2 "./test.txt")
+;; (solve "./test")
+;; (solve-part2 "./test")

@@ -63,8 +63,8 @@
        (vals)
        (apply *)))
 
-(readfile "./input.txt" part1-reducer)
-(readfile "./input.txt" part2-reducer)
+(readfile "./input" part1-reducer)
+(readfile "./input" part2-reducer)
 
-;; (readfile "./test.txt" part1-reducer)
-;; (readfile "./test.txt" part2-reducer)
+;; (readfile "./test" part1-reducer)
+;; (readfile "./test" part2-reducer)
