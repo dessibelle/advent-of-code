@@ -62,8 +62,7 @@
 
   (map is-bingo-on-board game-state)
 ;;   (remove nil? (apply concat (map is-bingo-on-board game-state)))
-
-)
+  )
 
 (defn apply-bingo-number-to-cell [number cell]
   (if (= number (:val cell))
@@ -126,9 +125,7 @@
         first-winner (first (:winner-states state))
         last-winner (last (:winner-states state))]
     (println (calculate-score (:board first-winner) (:number first-winner)))
-    (println (calculate-score (:board last-winner) (:number last-winner)))
-    ))
-
+    (println (calculate-score (:board last-winner) (:number last-winner)))))
 
 (solve "./input")
 
