@@ -61,11 +61,11 @@
         points-by-vector (vectors-to-points (concat straight-lines diagonal-lines))
         points-by-frequency (frequencies (apply concat points-by-vector))
         points (filter (fn [[_ val]] (< 1 val)) points-by-frequency)]
-    (count points)
-    ))
+    (count points)))
 
 ;; (solve "./test" 1)
 ;; (solve "./test" 2)
+
 
 (solve "./input" 1)
 (solve "./input" 2)
