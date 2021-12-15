@@ -93,14 +93,6 @@
        slurp
        s/split-lines))
 
-(defn output-to-digit [output]
-  (case (count output)
-    2 1
-    4 4
-    3 7
-    7 8
-    0))
-
 (defn part-1-result [decoded-digit-groups]
   (let [decoded-digits (apply concat decoded-digit-groups)
         part-1-digits (filter (fn [d] (some (partial = d) [1 4 7 8])) decoded-digits)]
