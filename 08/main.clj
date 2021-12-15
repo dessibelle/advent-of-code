@@ -1,13 +1,13 @@
 (ns user (:require [clojure.string :as s]))
 
 (defn char-distance [a b]
-  (- (int (.charAt a 0)) (int (.charAt b 0))))
+  (- (int a) (int b)))
 
 (defn signal-string-to-bit-indices [signal-string]
   (if (empty? signal-string)
     '()
-    (let [chars (s/split signal-string #"")
-          offsets (map (fn [char] (char-distance char "a")) chars)]
+    (let [chars (concat signal-string)
+          offsets (map (fn [char] (char-distance char \a)) chars)]
       offsets)))
 
 (defn signal-string-to-int [signal-string]
