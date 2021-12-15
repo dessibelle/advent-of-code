@@ -25,29 +25,26 @@
      :output output}))
 
 (comment
+  ab     : 1       two wires
+  ab d   : 7       three wires
+  ab  ef : 4       four wires
+  abcdefg: 8       seven wires
 
-ab     : 1       two signals
-ab d   : 7       three signals
-ab  ef : 4       four signals
-abcdefg: 8       seven signals
+  a cd fg: 2       five wires, two common with 4
+  abcd f : 3       five wires, contains 1
+   bcdef : 5       five wires, contained within 6
 
-a cd fg: 2       five signals, two common with 4
-abcd f : 3       five signals, contains 1
- bcdef : 5       five signals, contained within 6
-
-abcdef : 9       six signals, contains 3 (and 5)
- bcdefg: 6       six signals, does not contain 1
-abcde g: 0       six signals, does not contain 3 (or 5)
-
-)
+  abcdef : 9       six wires, contains 3 (and 5)
+   bcdefg: 6       six wires, does not contain 1
+  abcde g: 0       six wires, does not contain 3 (or 5))
 
 (defn num-bits-set [byte]
   (->> (map (fn [idx] (bit-test byte idx)) (range 0 8))
        (filter true?)
        (count)))
 
-(defn matches-num-bits [num-bits signal-int]
-  (= num-bits (num-bits-set signal-int)))
+(defn matches-num-bits [num-bits wire-int]
+  (= num-bits (num-bits-set wire-int)))
 
 (defn find-first-by [predicate coll]
   (first (filter predicate coll)))
@@ -119,8 +116,7 @@ abcde g: 0       six signals, does not contain 3 (or 5)
         decoded-digits (map decode-note notes)
         result (if (= part 1)
                  (part-1-result decoded-digits)
-                 (part-2-result decoded-digits))
-        ]
+                 (part-2-result decoded-digits))]
     result))
 
 (solve "/Users/simon/Code/adventofcode2021/08/test" 1)
