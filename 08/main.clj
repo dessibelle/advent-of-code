@@ -109,8 +109,8 @@
                  (part-2-result decoded-digits))]
     result))
 
-(solve "/Users/simon/Code/adventofcode2021/08/test" 1)
-(solve "/Users/simon/Code/adventofcode2021/08/test" 2)
+(solve "./08/test" 1)
+(solve "./08/test" 2)
 
-(solve "/Users/simon/Code/adventofcode2021/08/input" 1)
-(solve "/Users/simon/Code/adventofcode2021/08/input" 2)
+(solve "./08/input" 1)
+(solve "./08/input" 2)
