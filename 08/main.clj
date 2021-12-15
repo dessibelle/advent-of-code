@@ -85,9 +85,11 @@ abcde g: 0       six signals, does not contain 3 (or 5)
   (let [signal (:signal note)
         digit-map (signal-to-digit-map signal)
         output-digits (:output note)
-        output-values (map digit-map output-digits)
-        output (reduce-kv (fn [sum k v] (+ sum (* v (exp 10 k)))) 0 (vec (reverse output-values)))]
-    output))
+        output-values (map digit-map output-digits)]
+     output-values))
+
+(defn parse-digits-to-int [digits]
+  (reduce-kv (fn [sum k v] (+ sum (* v (exp 10 k)))) 0 (vec (reverse digits))))
 
 (defn readfile [filename]
   (->> filename
@@ -102,23 +104,27 @@ abcde g: 0       six signals, does not contain 3 (or 5)
     7 8
     0))
 
-(defn solve-part-1 [filename part]
-  (let [input-data (readfile filename)
-        notes (map parse-note input-data)
-        output (map :output notes)
-        digits (map output-to-digit (apply concat output))
-        known-digits (remove (partial = 0) digits)
-        result (count known-digits)]
-    result))
+(defn part-1-result [decoded-digit-groups]
+  (let [decoded-digits (apply concat decoded-digit-groups)
+        part-1-digits (filter (fn [d] (some (partial = d) [1 4 7 8])) decoded-digits)]
+    (count part-1-digits)))
 
-(defn solve-part-2 [filename part]
-  (let [input-data (readfile filename)
-        notes (map parse-note input-data)
-        decoded-outputs (map decode-note notes)]
+(defn part-2-result [decoded-digits]
+  (let [decoded-outputs (map parse-digits-to-int decoded-digits)]
     (apply + decoded-outputs)))
 
-;; (solve-part-1 "/Users/simon/Code/adventofcode2021/08/test" 1)
-;; (solve-part-2 "/Users/simon/Code/adventofcode2021/08/test" 2)
+(defn solve [filename part]
+  (let [input-data (readfile filename)
+        notes (map parse-note input-data)
+        decoded-digits (map decode-note notes)
+        result (if (= part 1)
+                 (part-1-result decoded-digits)
+                 (part-2-result decoded-digits))
+        ]
+    result))
 
-;; (solve-part-1 "/Users/simon/Code/adventofcode2021/08/input" 1)
-(solve-part-2 "/Users/simon/Code/adventofcode2021/08/input" 2)
+(solve "/Users/simon/Code/adventofcode2021/08/test" 1)
+(solve "/Users/simon/Code/adventofcode2021/08/test" 2)
+
+(solve "/Users/simon/Code/adventofcode2021/08/input" 1)
+(solve "/Users/simon/Code/adventofcode2021/08/input" 2)
