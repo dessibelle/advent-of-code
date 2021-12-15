@@ -18,9 +18,7 @@
         raw-signal (s/split (first parts) #"\s+")
         raw-output (s/split (last parts) #"\s+")
         signal (map signal-string-to-int raw-signal)
-        output (map signal-string-to-int raw-output)
-        ]
-    parts
+        output (map signal-string-to-int raw-output)]
     {:signal signal
      :output output}))
 
