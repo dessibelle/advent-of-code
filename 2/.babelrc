@@ -1,0 +1,11 @@
+{
+  "env": {
+    "test": {
+      "presets": ["es2015"],
+      "only": [
+        "./**/*.js",
+        "node_modules/jest-runtime"
+      ]
+    }
+  }
+}
