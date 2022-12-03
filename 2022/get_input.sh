@@ -6,5 +6,5 @@ dir=$(printf "%02d" $day)
 
 cp -r template "${dir}"
 
-echo 'curl -H "Cookie: session={session}" "https://adventofcode.com/2021/day/${day}/input" -o "./${dir}/input"'
-curl -H "Cookie: session=${session}" "https://adventofcode.com/2021/day/${day}/input" -o "./${dir}/input"
+echo 'curl -H "Cookie: session={session}" "https://adventofcode.com/2022/day/${day}/input" -o "./${dir}/input"'
+curl -H "Cookie: session=${session}" "https://adventofcode.com/2022/day/${day}/input" -o "./${dir}/input"
