@@ -33,6 +33,42 @@ defmodule AOC do
     end
   end
 
+  def get_losing_move(opponent_move) do
+    # TODO: Can use some +1 and modulo math instead
+    cond do
+      opponent_move == :A ->
+        :C
+      opponent_move == :B ->
+        :A
+      opponent_move == :C ->
+        :B
+    end
+  end
+
+  def get_draw_move(opponent_move) do
+    # TODO: Can use == math instead
+    cond do
+      opponent_move == :A ->
+        :A
+      opponent_move == :B ->
+        :B
+      opponent_move == :C ->
+        :C
+    end
+  end
+
+  def get_winning_move(opponent_move) do
+    # TODO: Can use some -1 and modulo math instead
+    cond do
+      opponent_move == :A ->
+        :B
+      opponent_move == :B ->
+        :C
+      opponent_move == :C ->
+        :A
+    end
+  end
+
   def beats?(our_move, opponent_move) do
     # Rock       :X / :A / 1
     # Paper      :Y / :B / 2
@@ -52,7 +88,7 @@ defmodule AOC do
     end
   end
 
-  def score({opponent_move, our_move}) do
+  def score_p1({opponent_move, our_move}) do
     move_points = move_idx(our_move)
     cond do
       beats?(our_move, opponent_move) ->
@@ -64,15 +100,42 @@ defmodule AOC do
       end
   end
 
+  def score_p2({opponent_move, outcome}) do
+    cond do
+      outcome == :X ->
+        our_move = get_losing_move(opponent_move)
+        move_points = move_idx(our_move)
+        0 + move_points
+      outcome == :Y ->
+        our_move = get_draw_move(opponent_move)
+        move_points = move_idx(our_move)
+        3 + move_points
+      outcome == :Z ->
+        our_move = get_winning_move(opponent_move)
+        move_points = move_idx(our_move)
+        6 + move_points
+      end
+  end
+
   def load_input(path) do
     raw_input = read_input(path)
     rounds = parse_input(raw_input)
   end
 
-  def start(_type, _args) do
-    data = load_input("./input")
-    score = Enum.map(data, &AOC.score/1)
+  def solve(path, 1) do
+    rounds = load_input(path)
+    score = Enum.map(rounds, &AOC.score_p1/1)
     |> Enum.sum()
+  end
+
+  def solve(path, 2) do
+    rounds = load_input(path)
+    score = Enum.map(rounds, &AOC.score_p2/1)
+    |> Enum.sum()
+  end
+
+  def start(_type, _args) do
+    score = solve("./input", 2)
     IO.puts(inspect(score))
 
     # List all child processes to be supervised
