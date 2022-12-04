@@ -1,19 +1,31 @@
 defmodule AOC do
   @moduledoc """
-  Documentation for `AOC`.
+  Advent of Code solution
   """
 
-  @doc """
-  Hello world.
 
-  ## Examples
+  def read_input(path) do
+    {status, data} = File.read(path)
+    if status == :ok do
+      data
+    else
+      raise "Input data not found"
+    end
+  end
 
-      iex> AOC.hello()
-      :world
+  def parse_input(raw_input) do
+    String.split(raw_input)
+  end
 
-  """
+  def load_input(path) do
+    raw_input = read_input(path)
+    parse_input(raw_input)
+  end
+
   def start(_type, _args) do
-    IO.puts "Hello World"
+    data = load_input("./input")
+    IO.puts(inspect(data))
+
     # List all child processes to be supervised
     children = [
       # Starts a worker by calling: A.Worker.start_link(arg)
