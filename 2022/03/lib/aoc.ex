@@ -15,7 +15,6 @@ defmodule AOC do
 
   def parse_input(raw_input) do
     String.split(raw_input)
-    |> Enum.map(&AOC.compartmentalize_rucksack_contents/1)
   end
 
   def load_input(path) do
@@ -27,11 +26,10 @@ defmodule AOC do
     String.split_at(contents, Integer.floor_div(String.length(contents), 2))
     |> Tuple.to_list()
     |> Enum.map(fn compartment -> MapSet.new(String.to_charlist(compartment)) end)
-    |> List.to_tuple()
   end
 
-  def get_common_items({first, second}) do
-    MapSet.intersection(first, second)
+  def get_common_items(sets) do
+    Enum.reduce(sets, fn elem, acc -> MapSet.intersection(acc, elem) end)
   end
 
   def get_item_priority(item) do
@@ -42,19 +40,32 @@ defmodule AOC do
     end
   end
 
-  def solve(path, 1) do
-    load_input(path)
-    |> Enum.map(&AOC.get_common_items/1)
+  def get_priorities(rucksack) do
+    Enum.map(rucksack, &AOC.get_common_items/1)
     |> Enum.map(fn items ->
       MapSet.to_list(items)
       |> Enum.map(&AOC.get_item_priority/1)
       |> Enum.reduce(0, fn priority, acc -> priority + acc end)
     end)
+  end
+
+  def solve(path, 1) do
+    load_input(path)
+    |> Enum.map(&AOC.compartmentalize_rucksack_contents/1)
+    |> get_priorities()
+    |> Enum.sum()
+  end
+
+  def solve(path, 2) do
+    load_input(path)
+    |> Enum.map(fn rucksack -> String.to_charlist(rucksack) |> MapSet.new() end)
+    |> Enum.chunk_every(3)
+    |> get_priorities()
     |> Enum.sum()
   end
 
   def start(_type, _args) do
-    sum = solve("./input", 1)
+    sum = solve("./input", 2)
     IO.puts(sum |> inspect(charlists: :as_lists))
 
     # List all child processes to be supervised
