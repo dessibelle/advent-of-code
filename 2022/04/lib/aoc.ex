@@ -22,8 +22,16 @@ defmodule AOC do
     parse_input(raw_input)
   end
 
+  def solve(path, 1) do
+    load_input(path)
+  end
+
+  def solve(path, 1) do
+    load_input(path)
+  end
+
   def start(_type, _args) do
-    data = load_input("./input")
+    data = solve("./test", 1)
     IO.puts(inspect(data))
 
     # List all child processes to be supervised
