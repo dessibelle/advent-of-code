@@ -1,7 +1,66 @@
 defmodule AOC.Day05 do
 
+  def parse_row(raw_row, size) do
+    Range.new(0, size - 1)
+    |> Enum.to_list()
+    |> Enum.map(fn idx ->
+      pos = idx + 1 + 3 * idx
+      val = String.at(raw_row, pos)
+      if val == " ", do: nil, else: val
+    end)
+  end
+
+  def extract_rows(raw_stacks) do
+    {index, rows} = String.split(raw_stacks, "\n")
+    |> List.pop_at(-1)
+
+    IO.inspect(index)
+    size = index
+    |> String.at( -2)
+    |> String.to_integer()
+
+    data = rows
+    |> Enum.reverse()
+    |> Enum.map(fn row -> AOC.Day05.parse_row(row, size) end)
+
+    {data, size}
+  end
+
+  def parse_stacks(raw_stacks) do
+    {rows, size} = extract_rows(raw_stacks)
+
+    Range.new(0, size - 1)
+    |> Enum.to_list()
+    |> Enum.map(fn idx ->
+      Enum.map(rows, fn row -> Enum.at(row, idx) end)
+      |> Enum.filter(fn
+        nil -> false
+        _ -> true
+      end)
+    end)
+  end
+
+  def parse_operation(raw_operation) do
+    matches = Regex.named_captures(~r/move (?<amount>\d+) from (?<from>\d+) to (?<to>\d+)/, raw_operation)
+    for {key, val} <- matches, into: %{}, do: {String.to_atom(key), String.to_integer(val)}
+  end
+
+  def parse_operations(raw_operations) do
+    raw_operations
+    |> String.split("\n")
+    |> Enum.map(&AOC.Day05.parse_operation/1)
+  end
+
   def parse_input(raw_input) do
-    String.split(raw_input)
+    {raw_stacks, raw_operations} = raw_input
+    |> String.trim("\n")
+    |> String.split("\n\n")
+    |> List.to_tuple()
+
+    stacks = parse_stacks(raw_stacks)
+    operations = parse_operations(raw_operations)
+
+    {stacks, operations}
   end
 
   def solve(raw_input, 1) do
