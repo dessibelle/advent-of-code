@@ -13,8 +13,23 @@ defmodule AOC do
     end
   end
 
+  def parse_tuple(str_data, separator, parser_fn) do
+    String.split(str_data, separator)
+    |> Enum.map(parser_fn)
+    |> List.to_tuple()
+  end
+
+  def parse_range(range) do
+    parse_tuple(range, "-", &String.to_integer/1)
+  end
+
+  def parse_range_pair(range_pair) do
+    parse_tuple(range_pair, ",", &AOC.parse_range/1)
+  end
+
   def parse_input(raw_input) do
     String.split(raw_input)
+    |> Enum.map(&AOC.parse_range_pair/1)
   end
 
   def load_input(path) do
