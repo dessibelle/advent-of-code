@@ -7,10 +7,10 @@ defmodule AOCTest.Day05Test do
   @input Input.read!(05, "test")
 
   test "Part 1" do
-    assert Day.solve(@input, 1) == -1
+    assert Day.solve(@input, 1) == "CMZ"
   end
 
   test "Part 2" do
-    assert Day.solve(@input, 2) == -1
+    assert Day.solve(@input, 2) == ""
   end
 end
