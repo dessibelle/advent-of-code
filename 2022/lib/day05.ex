@@ -63,7 +63,10 @@ defmodule AOC.Day05 do
     {stacks, operations}
   end
 
-  def apply_operation(stacks, %{:amount => amount, :from => from, :to => to}) do
+  defp maybe_reverse(data, false), do: data
+  defp maybe_reverse(data, true), do: Enum.reverse(data)
+
+  def apply_operation(stacks, %{:amount => amount, :from => from, :to => to}, reverse) do
     cond do
       from == to -> stacks
       true ->
@@ -76,16 +79,16 @@ defmodule AOC.Day05 do
 
         to_stack = stacks
         |> Enum.at(to - 1)
-        |> Enum.concat(moved_items |> Enum.reverse())
+        |> Enum.concat(moved_items |> maybe_reverse(reverse))
 
         List.replace_at(stacks, from_idx, from_stack)
         |> List.replace_at(to_idx, to_stack)
     end
   end
 
-  def apply_operations({stacks, operations}) do
+  def apply_operations({stacks, operations}, reverse \\ true) do
     Enum.reduce(operations, stacks, fn operation, acc ->
-      AOC.Day05.apply_operation(acc, operation)
+      AOC.Day05.apply_operation(acc, operation, reverse)
     end)
   end
 
@@ -103,5 +106,8 @@ defmodule AOC.Day05 do
 
   def solve(raw_input, 2) do
     parse_input(raw_input)
+    |> apply_operations(false)
+    |> top_level_items()
+    |> Enum.join("")
   end
 end
