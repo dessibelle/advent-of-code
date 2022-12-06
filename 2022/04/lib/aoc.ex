@@ -55,14 +55,24 @@ defmodule AOC do
     range_is_subrange?({range1, range2}) or range_is_subrange?({range2, range1})
   end
 
+  def ranges_overlap?({range1, range2}) do
+    {r1a, r1b} = range1
+    {r2a, r2b} = range2
+    MapSet.intersection(MapSet.new(r1a..r1b), MapSet.new(r2a..r2b))
+    |> MapSet.size() > 0
+    # r2a >= r1a and r2b <= r1b
+  end
+
   def solve(path, 1) do
     load_input(path)
     |> Enum.filter(&AOC.either_range_is_subrange?/1)
     |> Enum.count()
   end
 
-  def solve(path, 1) do
+  def solve(path, 2) do
     load_input(path)
+    |> Enum.filter(&AOC.ranges_overlap?/1)
+    |> Enum.count()
   end
 
   def start(_type, _args) do
