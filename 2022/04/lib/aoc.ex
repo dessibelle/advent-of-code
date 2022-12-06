@@ -40,15 +40,8 @@ defmodule AOC do
   def range_is_subrange?({range1, range2}) do
     {r1a, r1b} = range1
     {r2a, r2b} = range2
-    # MapSet.subset?(MapSet.new(r1a..r1b), MapSet.new(r2a..r2b))
-    r2a >= r1a and r2b <= r1b
-  end
-
-  def range_is_subrange?({range1, range2}) do
-    {r1a, r1b} = range1
-    {r2a, r2b} = range2
-    # MapSet.subset?(MapSet.new(r1a..r1b), MapSet.new(r2a..r2b))
-    r2a >= r1a and r2b <= r1b
+    MapSet.subset?(MapSet.new(r1a..r1b), MapSet.new(r2a..r2b))
+    # r2a >= r1a and r2b <= r1b
   end
 
   def either_range_is_subrange?({range1, range2}) do
@@ -58,9 +51,11 @@ defmodule AOC do
   def ranges_overlap?({range1, range2}) do
     {r1a, r1b} = range1
     {r2a, r2b} = range2
-    MapSet.intersection(MapSet.new(r1a..r1b), MapSet.new(r2a..r2b))
-    |> MapSet.size() > 0
-    # r2a >= r1a and r2b <= r1b
+    !MapSet.disjoint?(MapSet.new(r1a..r1b), MapSet.new(r2a..r2b))
+    # ((r1a <= r2a) and (r2a <= r1b))
+    # or ((r1a <= r2b) and (r2b <= r1b))
+    # or ((r2a <= r1a) and (r1a <= r2b))
+    # or ((r2a <= r1b) and (r1b <= r2b))
   end
 
   def solve(path, 1) do
