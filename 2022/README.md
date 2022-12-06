@@ -2,6 +2,8 @@
 
 ### Usage example
 
+#### REPL
+
 ```
 iex -S mix
 iex(1)> AOC.Runner.run!(1)
@@ -12,4 +14,10 @@ input pt. 2: 212117
 [[:ok, :ok], [:ok, :ok]]
 iex(2)> IEx.Helpers.recompile()
 :noop
+```
+
+#### mix run
+
+```
+mix run aoc.ex 1
 ```
