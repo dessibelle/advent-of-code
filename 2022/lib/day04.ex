@@ -8,6 +8,7 @@ defmodule AOC.Day04 do
 
   def parse_range(range) do
     parse_tuple(range, "-", &String.to_integer/1)
+    |> (fn s -> Range.new(elem(s, 0), elem(s, 1)) end).()
   end
 
   def parse_range_pair(range_pair) do
@@ -20,10 +21,7 @@ defmodule AOC.Day04 do
   end
 
   def range_is_subrange?({range1, range2}) do
-    {r1a, r1b} = range1
-    {r2a, r2b} = range2
-    MapSet.subset?(MapSet.new(r1a..r1b), MapSet.new(r2a..r2b))
-    # r2a >= r1a and r2b <= r1b
+    MapSet.subset?(MapSet.new(range1), MapSet.new(range2))
   end
 
   def either_range_is_subrange?({range1, range2}) do
@@ -31,13 +29,7 @@ defmodule AOC.Day04 do
   end
 
   def ranges_overlap?({range1, range2}) do
-    {r1a, r1b} = range1
-    {r2a, r2b} = range2
-    !MapSet.disjoint?(MapSet.new(r1a..r1b), MapSet.new(r2a..r2b))
-    # ((r1a <= r2a) and (r2a <= r1b))
-    # or ((r1a <= r2b) and (r2b <= r1b))
-    # or ((r2a <= r1a) and (r1a <= r2b))
-    # or ((r2a <= r1b) and (r1b <= r2b))
+    !Range.disjoint?(range1, range2)
   end
 
   def solve(raw_input, 1) do
