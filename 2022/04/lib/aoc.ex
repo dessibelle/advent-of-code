@@ -37,8 +37,28 @@ defmodule AOC do
     parse_input(raw_input)
   end
 
+  def range_is_subrange?({range1, range2}) do
+    {r1a, r1b} = range1
+    {r2a, r2b} = range2
+    # MapSet.subset?(MapSet.new(r1a..r1b), MapSet.new(r2a..r2b))
+    r2a >= r1a and r2b <= r1b
+  end
+
+  def range_is_subrange?({range1, range2}) do
+    {r1a, r1b} = range1
+    {r2a, r2b} = range2
+    # MapSet.subset?(MapSet.new(r1a..r1b), MapSet.new(r2a..r2b))
+    r2a >= r1a and r2b <= r1b
+  end
+
+  def either_range_is_subrange?({range1, range2}) do
+    range_is_subrange?({range1, range2}) or range_is_subrange?({range2, range1})
+  end
+
   def solve(path, 1) do
     load_input(path)
+    |> Enum.filter(&AOC.either_range_is_subrange?/1)
+    |> Enum.count()
   end
 
   def solve(path, 1) do
@@ -46,8 +66,8 @@ defmodule AOC do
   end
 
   def start(_type, _args) do
-    data = solve("./test", 1)
-    IO.puts(inspect(data))
+    data = solve("./input", 1)
+    IO.puts(data |> inspect(charlists: :as_lists))
 
     # List all child processes to be supervised
     children = [
