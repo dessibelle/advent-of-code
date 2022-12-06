@@ -26,13 +26,13 @@ defmodule AOC do
     load_input(path)
   end
 
-  def solve(path, 1) do
+  def solve(path, 2) do
     load_input(path)
   end
 
   def start(_type, _args) do
     data = solve("./test", 1)
-    IO.puts(inspect(data))
+    IO.puts(data |> inspect(charlists: :as_lists))
 
     # List all child processes to be supervised
     children = [
