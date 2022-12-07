@@ -4,7 +4,17 @@ defmodule AOCTest.Day06Test do
 
   doctest Day
 
-  @input Input.read!(06, "test")
+  @test Input.read!(06, "test")
+
+  test "Part 1 (example)" do
+    assert Day.solve(@test, 1) == -1
+  end
+
+  test "Part 2 (example)" do
+    assert Day.solve(@test, 2) == -1
+  end
+
+  @input Input.read!(06, "input")
 
   test "Part 1" do
     assert Day.solve(@input, 1) == -1
