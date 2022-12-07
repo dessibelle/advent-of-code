@@ -11,15 +11,6 @@ defmodule AOC.Day06 do
     |> MapSet.size() === block_size
   end
 
-  def take_first_valid_marker(stream, block_size) do
-    {marker_candidate, idx} = Stream.take(stream, 1) |> Enum.to_list() |> List.first()
-    if valid_marker?(marker_candidate, block_size) do
-      {marker_candidate, idx + block_size}
-    else
-      take_first_valid_marker(Stream.drop(stream, 1), block_size)
-    end
-  end
-
   def find_first_marker(str, block_size \\ 4) do
     chars = str
     |> String.to_charlist()
@@ -29,7 +20,11 @@ defmodule AOC.Day06 do
       Enum.slice(chars, idx, block_size)
     end)
     |> Stream.with_index()
-    |> take_first_valid_marker(block_size)
+    |> Stream.drop_while(fn {marker, _idx} -> !valid_marker?(marker, block_size) end)
+    |> Stream.take(1)
+    |> Enum.to_list()
+    |> List.first()
+    |> (fn {marker, idx} -> {marker, idx + block_size} end).()
   end
 
   def format_solution({marker, index}) do
