@@ -32,14 +32,21 @@ defmodule AOC.Day06 do
     |> take_first_valid_marker(block_size)
   end
 
+  def format_solution({marker, index}) do
+    "Found marker '#{marker}' after #{index} chars"
+  end
+
   def solve(raw_input, 1) do
     parse_input(raw_input)
     |> Enum.map(&AOC.Day06.find_first_marker/1)
-    |> Enum.map(fn {marker, index} -> "Found marker '#{marker}' after #{index} chars" end)
+    |> Enum.map(&AOC.Day06.format_solution/1)
     |> Enum.join("\n")
   end
 
   def solve(raw_input, 2) do
     parse_input(raw_input)
+    |> Enum.map(fn input -> AOC.Day06.find_first_marker(input, 14) end)
+    |> Enum.map(&AOC.Day06.format_solution/1)
+    |> Enum.join("\n")
   end
 end
