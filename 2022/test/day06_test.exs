@@ -7,20 +7,20 @@ defmodule AOCTest.Day06Test do
   @test Input.read!(06, "test")
 
   test "Part 1 (example)" do
-    assert Day.solve(@test, 1) == -1
+    assert Day.solve(@test, 1) == "Found marker 'jpqm' after 7 chars\nFound marker 'vwbj' after 5 chars\nFound marker 'pdvj' after 6 chars\nFound marker 'rfnt' after 10 chars\nFound marker 'zqfr' after 11 chars"
   end
 
   test "Part 2 (example)" do
-    assert Day.solve(@test, 2) == -1
+    assert Day.solve(@test, 2) == "Found marker 'qmgbljsphdztnv' after 19 chars\nFound marker 'vbhsrlpgdmjqwf' after 23 chars\nFound marker 'ldpwncqszvftbr' after 23 chars\nFound marker 'wmzdfjlvtqnbhc' after 29 chars\nFound marker 'jwzlrfnpqdbhtm' after 26 chars"
   end
 
   @input Input.read!(06, "input")
 
   test "Part 1" do
-    assert Day.solve(@input, 1) == -1
+    assert Day.solve(@input, 1) == "Found marker 'wbcl' after 1833 chars"
   end
 
   test "Part 2" do
-    assert Day.solve(@input, 2) == -1
+    assert Day.solve(@input, 2) == "Found marker 'vbnwqdhtlsfcjz' after 3425 chars"
   end
 end
