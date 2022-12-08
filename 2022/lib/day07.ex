@@ -63,6 +63,15 @@ defmodule AOC.Day07 do
     end)
   end
 
+  def find_dir_to_delete(tree) do
+    free_space = 70000000 - Map.get(tree, "/")
+    threshold = 30000000
+    tree
+    |> Map.filter(fn {_path, size} -> free_space + size >= threshold end)
+    |> Map.values()
+    |> Enum.min()
+  end
+
   def solve(raw_input, 1) do
     parse_input(raw_input)
     |> process_input()
@@ -76,5 +85,6 @@ defmodule AOC.Day07 do
     parse_input(raw_input)
     |> process_input()
     |> elem(0)
+    |> find_dir_to_delete()
   end
 end

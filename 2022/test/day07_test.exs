@@ -21,6 +21,6 @@ defmodule AOCTest.Day07Test do
   end
 
   test "Part 2" do
-    assert Day.solve(@input, 2) == -1
+    assert Day.solve(@input, 2) == 214171
   end
 end
