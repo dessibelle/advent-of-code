@@ -11,16 +11,16 @@ defmodule AOCTest.Day07Test do
   end
 
   test "Part 2 (example)" do
-    assert Day.solve(@test, 2) == -1
+    assert Day.solve(@test, 2) == 24933642
   end
 
-  # @input Input.read!(07, "input")
+  @input Input.read!(07, "input")
 
-  # test "Part 1" do
-  #   assert Day.solve(@input, 1) == -1
-  # end
+  test "Part 1" do
+    assert Day.solve(@input, 1) == 1583951
+  end
 
-  # test "Part 2" do
-  #   assert Day.solve(@input, 2) == -1
-  # end
+  test "Part 2" do
+    assert Day.solve(@input, 2) == -1
+  end
 end
