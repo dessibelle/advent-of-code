@@ -12,7 +12,7 @@ defmodule AOC.Day08 do
 
   def get_range(row, step) do
     first = 1
-    last = length(row) - 2
+    last = length(row) - 1
     cond do
       step > 0 ->
         first..last//step
@@ -24,8 +24,6 @@ defmodule AOC.Day08 do
   def visible_on_row?(row, step \\ 1) do
     get_range(row, step)
     |> Enum.reduce(row, fn idx, acc ->
-      # TODO: This needs to consider all neihghbours, all the way to the edge, not just prev
-      # IEx.Helpers.recompile() &&  Input.read!(8, "test") |> AOC.Day08.parse_input() |> AOC.Day08.transpose() |> Enum.at(3) |> AOC.Day08.visible_on_row?()
       max_val = row
       |> Enum.slice(0, idx)
       |> Enum.max()
@@ -49,12 +47,12 @@ defmodule AOC.Day08 do
   def visible_in_grid?(grid) do
     ltr = Enum.map(grid, fn row -> visible_on_row?(row, 1) end)
     # rtl = Enum.map(grid, fn row -> visible_on_row?(row, -1) end)
-    rtl = Enum.map(grid, fn row -> visible_on_row?(row |> Enum.reverse(), 1) end)
+    rtl = Enum.map(grid, fn row -> visible_on_row?(row |> Enum.reverse(), 1) |> Enum.reverse() end)
 
     translated_grid = transpose(grid)
     ttb = Enum.map(translated_grid, fn row -> visible_on_row?(row, 1) end) |> transpose()
     # btt = Enum.map(translated_grid, fn row -> visible_on_row?(row, -1) end) |> transpose()
-    btt = Enum.map(translated_grid, fn row -> visible_on_row?(row |> Enum.reverse(), 1) end) |> transpose()
+    btt = Enum.map(translated_grid, fn row -> visible_on_row?(row |> Enum.reverse(), 1) end) |> transpose() |> Enum.reverse()
 
     [ltr, rtl, ttb, btt]
     |> Enum.map(&List.flatten/1)
@@ -66,7 +64,7 @@ defmodule AOC.Day08 do
       |> Enum.uniq()
       |> List.first()
     end)
-    # |> Enum.chunk_every(length(Enum.at(grid, 0)))
+    # |> Enum.chunk_every(length(Enum.at(grid, 0))) # for rendering resulting grid
   end
 
   def solve(raw_input, 1) do
