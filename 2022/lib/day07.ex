@@ -23,7 +23,7 @@ defmodule AOC.Day07 do
       delta == ".." ->
         pwd |> tl
       true ->
-        [delta | pwd]
+        [delta | pwd] # NOTE: stack is reversed because of linked lists being efficient that way
     end
   end
 
@@ -33,6 +33,17 @@ defmodule AOC.Day07 do
     |> Enum.reverse()
     |> Enum.join("/")
     |> prepend("/")
+  end
+
+  def dir_paths_for_pwd(pwd) do
+    format_pwd(pwd)
+  end
+
+  def increment_dir_size(tree, pwd, file_size) do
+    0..length(pwd)
+    |> Enum.reduce(tree, fn idx, acc ->
+      Map.update(acc, format_pwd(Enum.take(pwd, idx * -1)), file_size, &(&1 + file_size))
+    end)
   end
 
   def process_input(input) do
@@ -45,7 +56,7 @@ defmodule AOC.Day07 do
           file_size = data
             |> List.first()
             |> String.to_integer()
-          {Map.update(tree, format_pwd(pwd), file_size, &(&1 + file_size)), pwd}
+          {increment_dir_size(tree, pwd, file_size), pwd}
         true ->
           {tree, pwd}
       end
