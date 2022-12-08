@@ -16,27 +16,23 @@ defmodule AOC.Day07 do
 
   def cd(pwd, delta) do
     cond do
-      String.at(delta, 0) == "/" ->
-        "/"
+      delta == "/" ->
+        []
       delta == ".." ->
-        pwd
-        |> String.split("/")
-        |> Enum.drop(-1)
-        |> Enum.join("/")
-      pwd == "/" ->
-        "#{pwd}#{delta}"
+        pwd |> tl
       true ->
-        "#{pwd}/#{delta}"
+        [delta | pwd]
     end
   end
 
   def process_input(input) do
     input
-    |> Enum.reduce({%{}, "/"}, fn {type, data}, {tree, pwd} ->
-      if type == :command && List.first(data) == "cd" do
-        {tree, cd(pwd, Enum.at(data, 1))}
-      else
-        {tree, pwd}
+    |> Enum.reduce({%{}, []}, fn {type, data}, {tree, pwd} ->
+      cond do
+        type == :command && List.first(data) == "cd" ->
+          {tree, cd(pwd, Enum.at(data, 1))}
+        true ->
+          {tree, pwd}
       end
     end)
   end
