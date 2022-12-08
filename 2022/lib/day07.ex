@@ -63,20 +63,18 @@ defmodule AOC.Day07 do
     end)
   end
 
-  def filter_dirs({tree, _}, filter_fn) do
-    tree
-    |> Map.filter(filter_fn)
-  end
-
   def solve(raw_input, 1) do
     parse_input(raw_input)
     |> process_input()
-    |> filter_dirs(fn {_path, size} -> size <= 100000 end)
+    |> elem(0)
+    |> Map.filter(fn {_path, size} -> size <= 100000 end)
     |> Map.values()
     |> Enum.sum()
   end
 
   def solve(raw_input, 2) do
     parse_input(raw_input)
+    |> process_input()
+    |> elem(0)
   end
 end
