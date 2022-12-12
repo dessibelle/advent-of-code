@@ -37,6 +37,8 @@ defmodule AOC.Day09 do
 
   def add_coords({ x1, y1 }, { x2, y2 }), do: { x1 + x2, y1 + y2}
 
+  def sub_coords({ x1, y1 }, { x2, y2 }), do: { x1 - x2, y1 - y2}
+
   def surrounding_coordinates(cell, offsets) do
     MapSet.new(Enum.map(offsets, fn offset -> add_coords(cell, offset) end))
   end
@@ -46,22 +48,28 @@ defmodule AOC.Day09 do
     |> MapSet.member?(tail)
   end
 
-  def next_tail_position(head, tail) do
+  def next_tail_position(head, tail, allow_diagonal_head_movement \\ false) do
     if !in_vicinity?(head, tail) do
       valid_cells = surrounding_coordinates(head, @valid_position_offsets)
       reachable_cells = surrounding_coordinates(tail, @all_offsets)
-      MapSet.intersection(valid_cells, reachable_cells)
-      |> MapSet.to_list()
-      |> List.first()
+      intersection = MapSet.intersection(valid_cells, reachable_cells)
+
+      if MapSet.size(intersection) == 0 and allow_diagonal_head_movement do
+        all_head_neighbours = surrounding_coordinates(head, @all_offsets)
+        MapSet.intersection(all_head_neighbours, reachable_cells)
+        |> MapSet.to_list()
+        |> List.first()
+      else
+        intersection |> MapSet.to_list() |> List.first()
+      end
     else
       tail
     end
   end
 
-  def apply_movement(movement, %{head: head, tail: tail, visited_positions: visited_positions}) do
+  def apply_movement(movement, %{head: head, tail: tail, visited_positions: visited_positions}, iteration \\ 0) do
     next_head = add_coords(head, movement)
-    next_tail = next_tail_position(next_head, tail)
-
+    next_tail = next_tail_position(next_head, tail, iteration != 0)
     %{
       head: next_head,
       tail: next_tail,
@@ -69,13 +77,30 @@ defmodule AOC.Day09 do
     }
   end
 
-  def apply_movements(movements) do
+  def apply_movements_reducer(movement, %{head: head, tail: tail, visited_positions: visited_positions, movements: movements}, iteration) do
+    d = apply_movement(movement, %{head: head, tail: tail, visited_positions: visited_positions}, iteration)
+    %{tail: next_tail} = d
+    next_movement = sub_coords(next_tail, tail)
+    next_movements = [next_movement | movements]
+    Map.put(d, :movements, next_movements)
+  end
+
+  def apply_movements(movements, iteration \\ 0) do
     movements
     |> Enum.reduce(%{
       head: {0, 0},
       tail: {0, 0},
       visited_positions: MapSet.new(),
-    }, &AOC.Day09.apply_movement/2)
+      movements: [],
+    }, fn m, a -> apply_movements_reducer(m, a, iteration) end)
+    |> then(fn d ->
+      next_movements = Map.get(d, :movements) |> Enum.reverse() # We need to reverse this because values are prepended to our linked list
+      if iteration <= 2 do
+        d
+      else
+        apply_movements(next_movements, iteration - 1)
+      end
+    end)
   end
 
   def get_score(%{visited_positions: visited_positions}) do
@@ -85,11 +110,13 @@ defmodule AOC.Day09 do
 
   def solve(raw_input, 1) do
     parse_input(raw_input)
-    |> apply_movements
+    |> apply_movements()
     |> get_score()
   end
 
   def solve(raw_input, 2) do
     parse_input(raw_input)
+    |> apply_movements(10)
+    |> get_score()
   end
 end
