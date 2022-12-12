@@ -1,7 +1,9 @@
 defmodule AOC.Day00 do
 
   def parse_input(raw_input) do
-    String.split(raw_input)
+    raw_input
+    |> String.trim()
+    |> String.split("\n")
   end
 
   def solve(raw_input, 1) do
