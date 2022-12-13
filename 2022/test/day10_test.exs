@@ -14,13 +14,13 @@ defmodule AOCTest.Day10Test do
     assert Day.solve(@test, 2) == -1
   end
 
-  # @input Input.read!(10, "input")
+  @input Input.read!(10, "input")
 
-  # test "Part 1" do
-  #   assert Day.solve(@input, 1) == -1
-  # end
+  test "Part 1" do
+    assert Day.solve(@input, 1) == 15880
+  end
 
-  # test "Part 2" do
-  #   assert Day.solve(@input, 2) == -1
-  # end
+  test "Part 2" do
+    assert Day.solve(@input, 2) == -1
+  end
 end
