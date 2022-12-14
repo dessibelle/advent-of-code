@@ -16,6 +16,12 @@ iex(2)> IEx.Helpers.recompile()
 :noop
 ```
 
+It's also possible to run a part of a single day, like so:
+```
+IEx.Helpers.recompile() && Input.read!(1, "test") |> AOC.Day01.solve(1)
+```
+
+
 #### mix run
 
 ```
