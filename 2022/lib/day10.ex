@@ -16,8 +16,8 @@ defmodule AOC.Day10 do
     |> Enum.map(&AOC.Day10.parse_instruction/1)
   end
 
-  def solve(raw_input, 1) do
-    parse_input(raw_input)
+  def get_register_at_cycle_states(input) do
+    input
     |> Enum.map(fn {instruction, _value} = op ->
       if instruction == :addx do
         [op, {:noop, false}]
@@ -37,6 +37,11 @@ defmodule AOC.Day10 do
     end)
     |> Enum.reverse()
     |> Enum.with_index(1)
+  end
+
+  def solve(raw_input, 1) do
+    parse_input(raw_input)
+    |> get_register_at_cycle_states()
     |> Enum.filter(fn {_value, idx} ->
       idx in [20, 60, 100, 140, 180, 220]
     end)
@@ -53,5 +58,16 @@ defmodule AOC.Day10 do
 
   def solve(raw_input, 2) do
     parse_input(raw_input)
+    |> get_register_at_cycle_states()
+    |> Enum.map(fn {value, index} ->
+      col = Integer.mod(index - 1, 40)
+      if col - value in -1..1, do: "#", else: "."
+    end)
+    |> Enum.chunk_every(40)
+    |> Enum.join("\n")
+    |> then(fn s ->
+      IO.puts(s)
+      s
+    end)
   end
 end
