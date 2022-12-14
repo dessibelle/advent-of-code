@@ -25,7 +25,7 @@ defmodule AOC.Day11 do
     end
   end
 
-  def parse_monkey(monkey_input, denominator) do
+  def parse_monkey(monkey_input, {denominator, common_multiple}) do
     [_, items_str, op_str, test_str, truthy_str, falsy_str] = String.split(monkey_input, "\n")
     digits_pattern = ~r/\d+/
     items = Regex.scan(digits_pattern, items_str) |> List.flatten() |> Enum.map(&String.to_integer/1)
@@ -37,10 +37,11 @@ defmodule AOC.Day11 do
     [operation_str, l, op, r] = operation_matches
     operation = parse_operation(l, op, r)
 
-    operation = if is_number(denominator) do
-      &(operation.(&1) |> Integer.floor_div(denominator))
-    else
-      operation
+    operation = cond do
+      is_number(denominator) ->
+        &(operation.(&1) |> Integer.floor_div(denominator))
+      is_number(common_multiple) ->
+        &(Integer.mod(&1, common_multiple)) |> operation.()
     end
 
     %{
@@ -58,15 +59,27 @@ defmodule AOC.Day11 do
     }
   end
 
+  def get_common_multiple(raw_input) do
+    Regex.scan(~r/Test: divisible by (\d+)/, raw_input)
+    |> Enum.map(fn l -> l |> List.last() |> String.to_integer() end)
+    |> Enum.product()
+  end
+
   def parse_input(raw_input, denominator \\ nil) do
+    common_multiple = if denominator == nil do
+      get_common_multiple(raw_input)
+    else
+      nil
+    end
+
     raw_input
     |> String.trim()
     |> String.split("\n\n")
-    |> Enum.map(fn monkey_input -> parse_monkey(monkey_input, denominator) end)
+    |> Enum.map(fn monkey_input -> parse_monkey(monkey_input, {denominator, common_multiple}) end)
     |> Enum.with_index()
   end
 
-  def take_turn(monkeys, monkey_idx) do
+  def take_turn(monkey_idx, monkeys) do
     {monkey, _} = Enum.at(monkeys, monkey_idx)
 
     # IO.puts("Monkey #{monkey_idx}: (#{Enum.join(monkey.items, ", ")})")
@@ -123,9 +136,7 @@ defmodule AOC.Day11 do
 
   def play_round(monkeys) do
     0..(length(monkeys) - 1)
-    |> Enum.reduce(monkeys, fn idx, acc ->
-      take_turn(acc, idx)
-    end)
+    |> Enum.reduce(monkeys, &AOC.Day11.take_turn/2)
     # |> then(fn state ->
     #   state
     #   |> Enum.map(fn {monkey, idx} -> "Monkey #{idx}: #{Enum.join(monkey.items, ", ")}" end)
@@ -136,11 +147,11 @@ defmodule AOC.Day11 do
 
   def play(monkeys, iterations) do
     1..iterations
-    |> Enum.reduce(monkeys, fn idx, acc ->
-      if Integer.mod(idx, 100) == 1 do
-        IO.puts("== After round #{idx - 1} ==")
-        print_inspections(acc)
-      end
+    |> Enum.reduce(monkeys, fn _idx, acc ->
+      # if idx in 1..10_000//1000 do
+      #   IO.puts("== After round #{idx - 1} ==")
+      #   print_inspections(acc)
+      # end
       play_round(acc)
     end)
   end
@@ -157,17 +168,17 @@ defmodule AOC.Day11 do
 
   def print_inspections(monkeys) do
     monkeys
-    |> Enum.map(&AOC.Day11.format_item_inspections/1)
+    |> Stream.map(&AOC.Day11.format_item_inspections/1)
     |> Enum.join("\n")
     |> then(fn s -> IO.puts(s) end)
   end
 
   def sum_most_active(monkeys, top_n) do
-    IO.puts("== Done ==")
-    print_inspections(monkeys)
+    # IO.puts("== Done ==")
+    # print_inspections(monkeys)
 
     counts = monkeys
-    |> Enum.map(&AOC.Day11.count_item_inspections/1)
+    |> Stream.map(&AOC.Day11.count_item_inspections/1)
     |> Enum.sort_by(fn {inspections, _} -> inspections end, :desc)
     |> Enum.take(top_n)
 
