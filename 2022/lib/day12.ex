@@ -28,6 +28,14 @@ defmodule AOC.Day12 do
     end)
   end
 
+  def state_with_height_indices(%{grid: grid} = state) do
+    indices_by_height = grid
+      |> Enum.with_index()
+      |> Enum.group_by(fn {v, _idx} -> v end, fn {_v, idx} -> idx end)
+
+    Map.merge(state, %{indices_by_height: indices_by_height})
+  end
+
   def parse_input(raw_input) do
     raw_input
     |> String.trim()
@@ -76,15 +84,19 @@ defmodule AOC.Day12 do
   end
 
   def bfs_reducer(_, %{queue: q, explored: e}, %{target_idx: target_idx, grid: grid}) do
-    {{:value, node}, q} = :queue.out(q)
-    %{value: idx} = node
+    case :queue.out(q) do
+      {{:value, node}, q} ->
+        %{value: idx} = node
 
-    if idx == target_idx do
-      {:halt, node}
-    else
-      state = bfs_get_neighbours(grid, idx)
-      |> Enum.reduce(%{queue: q, explored: e}, &(bfs_inner_reducer(&1, &2, node)))
-      {:cont, state}
+        if idx == target_idx do
+          {:halt, node}
+        else
+          state = bfs_get_neighbours(grid, idx)
+          |> Enum.reduce(%{queue: q, explored: e}, &(bfs_inner_reducer(&1, &2, node)))
+          {:cont, state}
+        end
+      {:empty, _} ->
+        {:halt, nil}
     end
   end
 
@@ -101,6 +113,7 @@ defmodule AOC.Day12 do
   end
 
   def collect_path(_, path \\ [])
+  def collect_path(node, _) when node == nil do nil end
   def collect_path(%{value: value, parent: nil}, path) do [value | path] end
   def collect_path(%{value: value, parent: parent}, path) do
     collect_path(parent, [value | path])
@@ -119,6 +132,27 @@ defmodule AOC.Day12 do
   end
 
   def solve(raw_input, 2) do
-    parse_input(raw_input)
+    state = parse_input(raw_input)
+    |> init_state()
+    |> state_with_height_indices()
+
+    %{indices_by_height: indices_by_height} = state
+    starting_positions = Map.get(indices_by_height, ?a)
+
+    starting_positions
+    |> Enum.map(fn idx ->
+      Map.put(state, :start_idx, idx) |> run()
+    end)
+    |> Enum.reject(&(&1 == nil))
+    |> Enum.map(&(length(&1 ) - 1))
+    |> Enum.min()
   end
+
+  def solve(raw_input, n) do
+    parse_input(raw_input)
+    |> init_state()
+    |> Map.put(:start_idx, n)
+    |> run()
+  end
+
 end
