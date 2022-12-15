@@ -88,7 +88,6 @@ defmodule AOC.Day11 do
       # IO.puts("  Monkey inspects an item with a worry level of #{item}.")
       # Integer.floor_div(monkey.operation.(item), 3)
 
-      # TODO: Enable worry level again, for part 1
       monkey.operation.(item)
       # |> then(fn l ->
       #   IO.puts("    Worry level #{monkey.op} by #{monkey.r} to #{l}.")
