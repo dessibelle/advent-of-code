@@ -65,9 +65,5 @@ defmodule AOC.Day10 do
     end)
     |> Enum.chunk_every(40)
     |> Enum.join("\n")
-    |> then(fn s ->
-      IO.puts(s)
-      s
-    end)
   end
 end
