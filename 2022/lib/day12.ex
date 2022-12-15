@@ -8,16 +8,13 @@ defmodule AOC.Day12 do
     |> Enum.reduce(%{
       :grid => flat_grid,
       :height => length(matrix),
-      :width => length(List.first(matrix, 0)),
-      :moves => [],
-      :shortest_path => flat_grid},
-      fn indexed_item, acc ->
+      :width => length(List.first(matrix, 0))
+    }, fn indexed_item, acc ->
       {value, idx} = indexed_item
       cond do
         value == ?S ->
           Map.merge(acc, %{
             start_idx: idx,
-            path: [idx],
             grid: List.update_at(Map.get(acc, :grid), idx, fn _ -> ?a end),
           })
         value == ?E ->
@@ -28,14 +25,6 @@ defmodule AOC.Day12 do
         true ->
           acc
       end
-    end)
-    |> then(fn %{grid: grid} = state ->
-      indices_by_height = grid
-      |> Enum.with_index()
-      |> Enum.reduce(%{}, fn {value, idx}, acc ->
-        Map.update(acc, value, MapSet.new([idx]), fn existing_values -> MapSet.put(existing_values, idx) end)
-      end)
-      Map.merge(state, %{indices_by_height: indices_by_height})
     end)
   end
 
