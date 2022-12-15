@@ -2,13 +2,15 @@ defmodule AOC.Day12 do
 
   def init_state(matrix) do
     flat_grid = matrix |> List.flatten()
+
     flat_grid
     |> Enum.with_index()
     |> Enum.reduce(%{
       :grid => flat_grid,
       :height => length(matrix),
       :width => length(List.first(matrix, 0)),
-      :moves => []},
+      :moves => [],
+      :shortest_path => flat_grid},
       fn indexed_item, acc ->
       {value, idx} = indexed_item
       cond do
@@ -20,12 +22,20 @@ defmodule AOC.Day12 do
           })
         value == ?E ->
           Map.merge(acc, %{
-            end_idx: idx,
+            target_idx: idx,
             grid: List.update_at(Map.get(acc, :grid), idx, fn _ -> ?z end),
           })
         true ->
           acc
       end
+    end)
+    |> then(fn %{grid: grid} = state ->
+      indices_by_height = grid
+      |> Enum.with_index()
+      |> Enum.reduce(%{}, fn {value, idx}, acc ->
+        Map.update(acc, value, MapSet.new([idx]), fn existing_values -> MapSet.put(existing_values, idx) end)
+      end)
+      Map.merge(state, %{indices_by_height: indices_by_height})
     end)
   end
 
@@ -36,74 +46,87 @@ defmodule AOC.Day12 do
     |> Enum.map(&String.to_charlist/1)
   end
 
-  def get_relative_indices(%{path: path, width: w}) do
-    pos = path |> hd
+  def bfs_get_relative_indices(%{graph: graph, width: width, height: height}, pos) do
+    num_items = length(graph)
+    col_idx = Integer.mod(pos, width)
+
     %{
-      right: pos + 1,
-      left: pos - 1,
-      up: pos - w,
-      down: pos + w,
+      up: (if pos >= width, do: pos - width, else: nil),
+      right: (if col_idx != width - 1, do: pos + 1, else: nil),
+      down: (if pos < (width * height - 1), do: pos + width, else: nil),
+      left: (if col_idx != 0, do: pos - 1, else: nil),
     }
-  end
-
-  def possible_moves(%{grid: grid, path: path} = state) do
-    pos = path |> hd
-    current_val = Enum.at(grid, pos)
-    num_items = length(grid)
-
-    is_index_reachable? = fn {_, idx} ->
-      in_bounds = idx in 0..(num_items - 1)
-      candidate_val = Enum.at(grid, idx, 1000) # Fallback to prevent the height_diff calculation from choking
-      height_diff = current_val - candidate_val
-      in_bounds && height_diff >= -1 && idx not in path
-    end
-
-    get_relative_indices(state)
-    |> Enum.filter(is_index_reachable?)
+    |> Enum.filter(fn {_, idx} -> idx in 0..(num_items - 1) end)
     |> Enum.into(%{})
   end
 
-  def move_to_index(%{path: path, moves: moves} = state, {direction, next_pos}) do
-    direction_char = fn
-      :right -> ?>
-      :left -> ?<
-      :up -> ?^
-      :down -> ?v
+  def bfs_get_neighbours(%{graph: graph, width: _, height: _} = grid, pos) do
+    current_val = Enum.at(graph, pos)
+
+    is_index_reachable? = fn {_, idx} ->
+      candidate_val = Enum.at(graph, idx, 1000) # Fallback to prevent the height_diff calculation from choking
+      height_diff = current_val - candidate_val
+      height_diff >= -1
     end
 
-    Map.merge(state, %{
-      :path => [next_pos | path],
-      :moves => [direction_char.(direction) | moves],
-    })
+    bfs_get_relative_indices(grid, pos)
+    |> Enum.filter(is_index_reachable?)
   end
 
-  def at_destination?(%{path: path, end_idx: end_idx}) do
-    current_idx = path |> hd
-    current_idx == end_idx
-  end
 
-  def find_best_path(%{moves: moves} = state) do
-    if at_destination?(state) do
-      {moves |> Enum.reverse()}
+  def bfs_inner_reducer({_, neighbour}, %{queue: acc_q, explored: acc_e} = acc, node) do
+    if neighbour not in acc_e do
+      acc_e = MapSet.put(acc_e, neighbour)
+      w = %{value: neighbour, parent: node}
+      acc_q = :queue.in(w, acc_q)
+
+      %{queue: acc_q, explored: acc_e}
     else
-      state
-      |> possible_moves()
-      |> Enum.map(fn {_direction, _idx} = move ->
-        state
-        |> move_to_index(move)
-        |> find_best_path()
-      end)
+      acc
     end
+  end
+
+  def bfs_reducer(_, %{queue: q, explored: e}, %{target_idx: target_idx, grid: grid}) do
+    {{:value, node}, q} = :queue.out(q)
+    %{value: idx} = node
+
+    if idx == target_idx do
+      {:halt, node}
+    else
+      state = bfs_get_neighbours(grid, idx)
+      |> Enum.reduce(%{queue: q, explored: e}, &(bfs_inner_reducer(&1, &2, node)))
+      {:cont, state}
+    end
+  end
+
+  def bfs(grid, root, target_idx) when is_number(root) do
+    bfs(grid, %{value: root, parent: nil}, target_idx)
+  end
+
+  def bfs(%{graph: graph, width: _, height: _} = grid, root, target_idx) do
+    %{value: root_idx} = root
+    explored = MapSet.new([root_idx])
+    queue = :queue.in(root, :queue.new())
+
+    Enum.reduce_while(1..length(graph), %{queue: queue, explored: explored}, &(bfs_reducer(&1, &2, %{target_idx: target_idx, grid: grid})))
+  end
+
+  def collect_path(_, path \\ [])
+  def collect_path(%{value: value, parent: nil}, path) do [value | path] end
+  def collect_path(%{value: value, parent: parent}, path) do
+    collect_path(parent, [value | path])
+  end
+
+  def run(%{grid: graph, width: width, height: height, start_idx: start_idx, target_idx: target_idx}) do
+    bfs(%{graph: graph, width: width, height: height}, start_idx, target_idx)
+    |> collect_path()
   end
 
   def solve(raw_input, 1) do
     parse_input(raw_input)
     |> init_state()
-    |> find_best_path()
-    |> List.flatten()
-    |> Enum.filter(fn s -> s != nil end)
-    |> Enum.map(&(elem(&1, 0)) |> length)
-    |> Enum.min()
+    |> run()
+    |> then(&(length(&1) - 1))
   end
 
   def solve(raw_input, 2) do

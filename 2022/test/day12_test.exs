@@ -6,21 +6,25 @@ defmodule AOCTest.Day12Test do
 
   @test Input.read!(12, "test")
 
+  @tag long_running: true
   test "Part 1 (example)" do
     assert Day.solve(@test, 1) == 31
   end
 
+  @tag long_running: true
   test "Part 2 (example)" do
     assert Day.solve(@test, 2) == -1
   end
 
-  # @input Input.read!(12, "input")
+  @input Input.read!(12, "input")
 
-  # test "Part 1" do
-  #   assert Day.solve(@input, 1) == -1
-  # end
+  @tag long_running: true
+  test "Part 1" do
+    assert Day.solve(@input, 1) == 330
+  end
 
-  # test "Part 2" do
-  #   assert Day.solve(@input, 2) == -1
-  # end
+  @tag long_running: true
+  test "Part 2" do
+    assert Day.solve(@input, 2) == -1
+  end
 end
