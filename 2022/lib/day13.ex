@@ -10,56 +10,40 @@ defmodule AOC.Day13 do
     |> Enum.map(fn [i1, i2] -> {i1, i2} end)
   end
 
-  def ordered_pair?({l1, l2}) when is_number(l1) and is_number(l2) do
-    IO.puts("Compare #{inspect(l1)} vs #{inspect(l2)}")
-    {l1, l2}
-    # cond do
-    #   l1 < l2 ->
-    #     :lt
-    #   l1 > l2 ->
-    #     :gt
-    #   true ->
-    #     :eq
-    # end
-  end
-
   def padded_lists(short, long, padding \\ nil) do
     {short ++ (1..(length(long) - length(short))//1 |> Enum.map(fn _ -> padding end)), long}
   end
 
+  def ordered_pair?({l1, l2}) when is_number(l1) and is_number(l2) do
+    {l1, l2}
+  end
+
   def ordered_pair?({l1, l2}) when is_number(l1) and is_list(l2) do
-    IO.puts("Compare #{inspect(l1)} vs #{inspect(l2)}")
     ordered_pair?({[l1], l2})
   end
 
   def ordered_pair?({l1, l2}) when is_list(l1) and is_number(l2) do
-    IO.puts("Compare #{inspect(l1)} vs #{inspect(l2)}")
     ordered_pair?({l1, [l2]})
   end
 
   def ordered_pair?({l1, l2}) when l1 == nil and l2 != nil do
-    IO.puts("Compare #{inspect(l1)} vs #{inspect(l2)}")
     {l1, l2}
   end
 
   def ordered_pair?({l1, l2}) when l1 != nil and l2 == nil do
-    IO.puts("Compare #{inspect(l1)} vs #{inspect(l2)}")
     {l1, l2}
   end
 
   def ordered_pair?({l1, l2}) when is_list(l1) and is_list(l2) do
-    IO.puts("Compare #{inspect(l1)} vs #{inspect(l2)}")
     left_len = length(l1)
     right_len = length(l2)
     cond do
       left_len == 0 and right_len == 0 ->
-        {0, 0}
+        {-1, -1}
       left_len == 0 and right_len > 0 ->
-        IO.puts("Left side ran out of items, so inputs are in the right order")
-        {0, 1}
+        {0, right_len}
       left_len > 0 and right_len == 0 ->
-        IO.puts("Right side ran out of items, so inputs are not in the right order")
-        {1, 0}
+        {left_len, 0}
       left_len < right_len ->
         {l, r} = padded_lists(l1, l2)
         ordered_pair?({l, r})
@@ -68,7 +52,7 @@ defmodule AOC.Day13 do
         ordered_pair?({l, r})
       true ->
         Enum.zip(l1, l2)
-        |> Enum.reduce_while([], fn {_i1, _i2} = pair, acc ->
+        |> Enum.reduce_while([], fn pair, acc ->
           if length(acc) == 0 or acc |> hd |> then(&(elem(&1, 0) == elem(&1, 1))) do
             {:cont, [ordered_pair?(pair) | acc]}
           else
@@ -79,8 +63,11 @@ defmodule AOC.Day13 do
     end
   end
 
-  def correctly_ordered?({left, right}) do
+  def correctly_ordered?(pair) do
+    {left, right} = ordered_pair?(pair)
     cond do
+      right == left ->
+        true
       left == nil ->
         true
       right == nil ->
@@ -88,6 +75,10 @@ defmodule AOC.Day13 do
       true ->
         left < right
     end
+  end
+
+  def sorter(l1, l2) do
+    correctly_ordered?({l1, l2})
   end
 
   def solve(raw_input, 1) do
@@ -100,6 +91,14 @@ defmodule AOC.Day13 do
   end
 
   def solve(raw_input, 2) do
+    divider_packets = [[[2]], [[6]]]
     parse_input(raw_input)
+    |> Enum.unzip()
+    |> then(fn {l1, l2} -> l1 ++ l2 ++ divider_packets end)
+    |> Enum.sort(&__MODULE__.sorter/2)
+    |> Enum.with_index(1)
+    |> Enum.filter(fn {l, _} -> l in divider_packets end)
+    |> Enum.map(fn {_, idx} -> idx end)
+    |> Enum.product()
   end
 end
