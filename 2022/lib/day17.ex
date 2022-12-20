@@ -1,5 +1,7 @@
 defmodule AOC.Day17 do
 
+  @block_width 7
+
   @blocks [
     [
       [?., ?., ?@, ?@, ?@, ?., ?.],
@@ -40,6 +42,20 @@ defmodule AOC.Day17 do
     |> then(fn l -> l ++ for _ <- 1..trailing_rows//1, do: @empty_row end)
   end
 
+  def move_block(block, direction) do
+    # TODO: Edge detection
+    case direction do
+      ?> ->
+        block
+        |> Enum.map(&Enum.slide(&1, @block_width - 1, 0))
+      ?< ->
+        block
+        |> Enum.map(&Enum.slide(&1, 0, @block_width - 1))
+      _ ->
+        block
+    end
+  end
+
   def format_block(block) do
     block
     |> Enum.map(fn l -> "|" <> List.to_string(l) <> "|" end)
@@ -51,6 +67,17 @@ defmodule AOC.Day17 do
 
     1..24
     |> Enum.map(&__MODULE__.get_block/1)
+    |> Enum.with_index()
+    |> Enum.map(fn {block, idx} ->
+      case Integer.mod(idx, 2) do
+        0 ->
+          move_block(block, ?>)
+        1 ->
+          move_block(block, ?<)
+        _ ->
+          block
+      end
+    end)
     |> Enum.map(&__MODULE__.format_block/1)
     |> Enum.map(&IO.puts/1)
   end
