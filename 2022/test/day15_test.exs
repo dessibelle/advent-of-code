@@ -7,7 +7,7 @@ defmodule AOCTest.Day15Test do
   @test Input.read!(15, "test")
 
   test "Part 1 (example)" do
-    assert Day.solve(@test, 1) == -1
+    assert Day.solve(@test, 1) == 26
   end
 
   test "Part 2 (example)" do
