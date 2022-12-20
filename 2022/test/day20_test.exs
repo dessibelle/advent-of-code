@@ -27,9 +27,9 @@ defmodule AOCTest.Day20Test do
     assert Day.solve(@test, 1) == 3
   end
 
-  # test "Part 2 (example)" do
-  #   assert Day.solve(@test, 2) == -1
-  # end
+  test "Part 2 (example)" do
+    assert Day.solve(@test, 2) == 1623178306
+  end
 
   @input Input.read!(20, "input")
 
@@ -37,7 +37,7 @@ defmodule AOCTest.Day20Test do
     assert Day.solve(@input, 1) == 2275
   end
 
-  # test "Part 2" do
-  #   assert Day.solve(@input, 2) == -1
-  # end
+  test "Part 2" do
+    assert Day.solve(@input, 2) == 4090409331120
+  end
 end
