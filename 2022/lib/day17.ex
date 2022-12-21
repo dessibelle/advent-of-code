@@ -4,7 +4,7 @@ defmodule AOC.Day17 do
 
   @blocks [
     [
-      [?., ?., ?@, ?@, ?@, ?., ?.],
+      [?., ?., ?@, ?@, ?@, ?@, ?.],
     ],
     [
       [?., ?., ?., ?@, ?., ?., ?.],
@@ -28,7 +28,7 @@ defmodule AOC.Day17 do
     ],
   ]
 
-  @empty_row [[?., ?., ?., ?., ?., ?., ?.]]
+  @empty_row [?., ?., ?., ?., ?., ?., ?.]
 
   def parse_input(raw_input) do
     raw_input
