@@ -173,5 +173,6 @@ defmodule AOC.Day19 do
   def solve(raw_input, 2) do
     parse_input(raw_input)
     |> inspect()
+    "in progress"
   end
 end

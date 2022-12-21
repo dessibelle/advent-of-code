@@ -127,11 +127,12 @@ defmodule AOC.Day17 do
           IO.puts("in place:")
       end
       IO.puts(block_str <> "\n")
-      block_str
     end)
+    "in progress"
   end
 
   def solve(raw_input, 2) do
     parse_input(raw_input)
+    "in progress"
   end
 end
