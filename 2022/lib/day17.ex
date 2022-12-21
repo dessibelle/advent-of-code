@@ -42,15 +42,38 @@ defmodule AOC.Day17 do
     |> then(fn l -> l ++ for _ <- 1..trailing_rows//1, do: @empty_row end)
   end
 
+  def can_move?(block, fun) do
+    block
+    |> Enum.map(fun)
+    |> Enum.all?(&(&1 == ?.))
+  end
+
+  def can_move_left?(block) do
+    block
+    |> can_move?(&Kernel.hd/1)
+  end
+
+  def can_move_right?(block) do
+    block
+    |> can_move?(&List.last/1)
+  end
+
   def move_block(block, direction) do
-    # TODO: Edge detection
     case direction do
       ?> ->
-        block
-        |> Enum.map(&Enum.slide(&1, @block_width - 1, 0))
+        if can_move_right?(block) do
+          block
+          |> Enum.map(&Enum.slide(&1, @block_width - 1, 0))
+        else
+          block
+        end
       ?< ->
-        block
-        |> Enum.map(&Enum.slide(&1, 0, @block_width - 1))
+        if can_move_left?(block) do
+          block
+          |> Enum.map(&Enum.slide(&1, 0, @block_width - 1))
+        else
+          block
+        end
       ?v ->
         block
         |> Enum.slide(length(block) - 1, 0)
@@ -72,19 +95,37 @@ defmodule AOC.Day17 do
     |> Enum.map(&__MODULE__.get_block/1)
     |> Enum.with_index()
     |> Enum.map(fn {block, idx} ->
-      case Integer.mod(idx, 3) do
-        0 ->
-          move_block(block, ?>)
-        1 ->
-          move_block(block, ?<)
-        2 ->
-          move_block(block, ?v)
-        _ ->
-          block
-      end
+      1..3
+      |> Enum.reduce(block, fn _, block_acc ->
+        case Integer.mod(idx, 3) do
+          0 ->
+            move_block(block_acc, ?>)
+          1 ->
+            move_block(block_acc, ?<)
+          2 ->
+            move_block(block_acc, ?v)
+          _ ->
+            block_acc
+        end
+      end)
     end)
     |> Enum.map(&__MODULE__.format_block/1)
-    |> Enum.map(&IO.puts/1)
+    # |> Enum.map(&IO.puts/1)
+    |> Enum.with_index()
+    |> Enum.map(fn {block_str, idx} ->
+
+      case Integer.mod(idx, 3) do
+        0 ->
+          IO.puts("right:")
+        1 ->
+          IO.puts("left:")
+        2 ->
+          IO.puts("down:")
+        _ ->
+          IO.puts("in place:")
+      end
+      IO.puts(block_str <> "\n")
+    end)
   end
 
   def solve(raw_input, 2) do
