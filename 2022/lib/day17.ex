@@ -51,6 +51,9 @@ defmodule AOC.Day17 do
       ?< ->
         block
         |> Enum.map(&Enum.slide(&1, 0, @block_width - 1))
+      ?v ->
+        block
+        |> Enum.slide(length(block) - 1, 0)
       _ ->
         block
     end
@@ -69,11 +72,13 @@ defmodule AOC.Day17 do
     |> Enum.map(&__MODULE__.get_block/1)
     |> Enum.with_index()
     |> Enum.map(fn {block, idx} ->
-      case Integer.mod(idx, 2) do
+      case Integer.mod(idx, 3) do
         0 ->
           move_block(block, ?>)
         1 ->
           move_block(block, ?<)
+        2 ->
+          move_block(block, ?v)
         _ ->
           block
       end
