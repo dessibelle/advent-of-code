@@ -166,11 +166,12 @@ defmodule AOC.Day19 do
     |> Enum.map(&apply_blueprint(&1, initial_state))
     |> Enum.map(&__MODULE__.score/1)
     |> Enum.with_index(1)
-    # |> Enum.map(fn {score, idx} -> score * idx end)
-    # |> Enum.sum()
+    |> Enum.map(fn {score, idx} -> score * idx end)
+    |> Enum.sum()
   end
 
   def solve(raw_input, 2) do
     parse_input(raw_input)
+    |> inspect()
   end
 end

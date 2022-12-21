@@ -11,9 +11,14 @@ defmodule AOC do
   """
   def start(_type, _args) do
     System.argv()
-    |> List.first
-    |> String.to_integer()
-    |> AOC.Runner.run!()
+    |> then(fn l ->
+      if length(l) > 0 do
+        l |> Enum.map(&String.to_integer/1)
+      else
+        1..21
+      end
+    end)
+    |> Enum.map(&AOC.Runner.run!/1)
 
     # List all child processes to be supervised
     children = [

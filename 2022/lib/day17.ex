@@ -127,6 +127,7 @@ defmodule AOC.Day17 do
           IO.puts("in place:")
       end
       IO.puts(block_str <> "\n")
+      block_str
     end)
   end
 
