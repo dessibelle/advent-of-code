@@ -58,26 +58,28 @@ defmodule AOC.Day17 do
     |> can_move?(&List.last/1)
   end
 
+  def can_move_down?(block) do
+    block
+    |> List.last()
+    |> Enum.all?(&(&1 == ?.))
+  end
+
   def move_block(block, direction) do
-    case direction do
-      ?> ->
-        if can_move_right?(block) do
-          block
-          |> Enum.map(&Enum.slide(&1, @block_width - 1, 0))
-        else
-          block
-        end
-      ?< ->
-        if can_move_left?(block) do
-          block
-          |> Enum.map(&Enum.slide(&1, 0, @block_width - 1))
-        else
-          block
-        end
-      ?v ->
+    cond do
+      direction == ?> && can_move_right?(block) ->
+        block
+        |> Enum.map(&Enum.slide(&1, @block_width - 1, 0))
+      direction == ?< && can_move_left?(block) ->
+        block
+        |> Enum.map(&Enum.slide(&1, 0, @block_width - 1))
+
+      direction == ?v && can_move_down?(block) ->
         block
         |> Enum.slide(length(block) - 1, 0)
-      _ ->
+      direction != ?v ->
+        block
+      true ->
+        # raise "No block movement possible"
         block
     end
   end
@@ -95,7 +97,7 @@ defmodule AOC.Day17 do
     |> Enum.map(&__MODULE__.get_block/1)
     |> Enum.with_index()
     |> Enum.map(fn {block, idx} ->
-      1..3
+      1..5
       |> Enum.reduce(block, fn _, block_acc ->
         case Integer.mod(idx, 3) do
           0 ->
