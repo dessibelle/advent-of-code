@@ -5,8 +5,8 @@ defmodule AOC.Runner do
     for mode <- ["test", "input"] do
       input = Input.read!(day, mode)
       for part <- 1..2 do
-        solution = apply(String.to_existing_atom(module_path), :solve, [input, part])
-        IO.puts("#{mode} pt. #{part}: #{solution}")
+        {u_secs, solution} = :timer.tc(String.to_existing_atom(module_path), :solve, [input, part])
+        IO.puts("#{mode} pt. #{part}: #{solution} (#{u_secs} µs)")
       end
     end
     IO.puts("")
