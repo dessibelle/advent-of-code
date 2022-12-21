@@ -16,7 +16,17 @@ defmodule AOC.Day21 do
 
     def get_value(monkey, state) do
       # IO.puts("querying monkey #{monkey.id} for value")
-      monkey.expression.({monkey, state})
+      cond do
+        monkey.value ->
+          monkey.value
+        monkey.expression ->
+          l = Map.get(state.monkeys, monkey.left_operand)
+          |> Monkey.get_value(state)
+          r = Map.get(state.monkeys, monkey.right_operand)
+          |> Monkey.get_value(state)
+
+          monkey.expression.(l, r)
+      end
     end
   end
 
@@ -25,26 +35,13 @@ defmodule AOC.Day21 do
     |> Regex.named_captures(line)
     |> then(fn %{"id" => id, "left_operand" => left_operand, "operator" => operator, "right_operand" => right_operand, "value" => value} ->
       id = String.to_atom(id)
-
-      cond do
-        value != "" ->
-          intval = String.to_integer(value)
-          %Monkey{id: id, value: intval, expression: fn {_, _} -> intval end}
-        left_operand != "" && operator != "" && right_operand != "" ->
-          left_operand = String.to_atom(left_operand)
-          right_operand = String.to_atom(right_operand)
-
-          expr = fn {_, state} ->
-            # IO.puts("    expr for #{monkey.id}, looking at monkeys #{left_operand} and #{right_operand}")
-            lm = Map.get(state.monkeys, left_operand)
-            rm = Map.get(state.monkeys, right_operand)
-            l = Monkey.get_value(lm, state)
-            r = Monkey.get_value(rm, state)
-
-            apply(String.to_existing_atom("Elixir.Kernel"), String.to_atom(operator), [l, r])
-          end
-          %Monkey{id: id, value: nil, expression: expr}
+      value = if value == "", do: nil, else: String.to_integer(value)
+      left_operand = if left_operand == "", do: nil, else: String.to_atom(left_operand)
+      right_operand = if right_operand == "", do: nil, else: String.to_atom(right_operand)
+      expr = fn l, r ->
+        apply(String.to_existing_atom("Elixir.Kernel"), String.to_atom(operator), [l, r])
       end
+      %Monkey{id: id, value: value, left_operand: left_operand, right_operand: right_operand, expression: expr}
     end)
   end
 
