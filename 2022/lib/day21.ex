@@ -1,14 +1,6 @@
 defmodule AOC.Day21 do
-
   defmodule State do
     defstruct monkeys: %{}, yell_candidate: nil
-
-    def add_monkey(state, monkey) do
-      # next_monkeys = Map.put(state.monkey, monkey.id, monkey)
-      struct!(state,
-        monkeys: Map.put(state.monkeys, monkey.id, monkey)
-      )
-    end
   end
 
   defmodule Monkey do
